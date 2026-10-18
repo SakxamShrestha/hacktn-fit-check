@@ -36,7 +36,7 @@ from app.matching.substitutes import find_substitutes
 from app.matching.verification import confirm, request_confirmation, withdraw
 from app.reference.country_power import country_centroid, lookup
 from app.reference.facility_registry import corroborates, find_candidates
-from app.storage.photos import fetch_photo, store_photo
+from app.storage.photos import discard_photo, fetch_photo, store_photo
 from app.web import forms
 from app.web.forms import FormError
 from app.web.presenters import rule_count, TONE_BY_OUTCOME, TONE_BY_STATUS
@@ -102,13 +102,10 @@ async def offer_submit(
     try:
         typed = spec_text.strip()
         image_data_url = ""
-        photo_key = ""
+        photo = None
         if nameplate is not None and nameplate.filename:
-            raw = await nameplate.read()
-            content_type = nameplate.content_type or ""
-            image_data_url = image_to_data_url(raw, content_type)
-            # Storage is best effort. A donation is never lost to a dead bucket.
-            photo_key = store_photo(raw, content_type) or ""
+            photo = (await nameplate.read(), nameplate.content_type or "")
+            image_data_url = image_to_data_url(*photo)
         if not typed and not image_data_url:
             raise FormError("Give a model name, paste spec text, or add a nameplate photo.")
 
@@ -124,9 +121,18 @@ async def offer_submit(
             origin=_point(forms.text(country, "Country", required=True), city),
             quantity_offered=forms.whole_number(quantity, "How many", default=1, minimum=1),
             available_until=forms.iso_date(available_until, "Available until"),
-            photo_key=photo_key,
+            # Uploaded only once everything else has succeeded. Storing it
+            # earlier left an object in the bucket that no offer pointed at
+            # every time extraction or validation failed.
+            photo_key=(store_photo(*photo) or "") if photo else "",
         )
-        offer_id = repo.save_offer(offer)
+        try:
+            offer_id = repo.save_offer(offer)
+        except RepositoryError:
+            # The object is already up and nothing will ever reference it.
+            if offer.photo_key:
+                discard_photo(offer.photo_key)
+            raise
     except (FormError, ValueError, GenAiError, RepositoryError) as exc:
         return _error(request, str(exc), back="/offer")
 

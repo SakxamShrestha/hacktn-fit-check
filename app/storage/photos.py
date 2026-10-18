@@ -130,6 +130,33 @@ def store_photo(raw: bytes, content_type: str) -> str | None:
     return key
 
 
+def discard_photo(key: str) -> bool:
+    """Delete a stored photograph. True when it is gone, False otherwise.
+
+    Used when an offer fails to save after its photograph was already
+    uploaded, so a failed donation does not leave an object in the bucket
+    that nothing will ever reference. Like everything else here it never
+    raises: a leaked object is a tidiness problem, not a reason to turn a
+    failed save into a crash.
+    """
+    if not key.strip():
+        return False
+
+    client = _object_storage_client()
+    if client is None:
+        LOGGER.warning("cannot discard photo %s: no object storage client", key)
+        return False
+
+    try:
+        client.delete_object(
+            SETTINGS.object_storage_namespace, SETTINGS.object_storage_bucket, key
+        )
+    except Exception as exc:  # noqa: BLE001 - a leaked object must not raise
+        LOGGER.warning("could not discard photo %s: %s", key, exc)
+        return False
+    return True
+
+
 def fetch_photo(key: str) -> tuple[bytes, str] | None:
     """Read one photo back as (bytes, content type). None when it is not there.
 
