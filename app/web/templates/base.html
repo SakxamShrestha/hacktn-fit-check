@@ -10,9 +10,20 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
   {% block chrome %}
-  <header class="topbar">
-    <div class="topbar-in">
-      <a class="mark" href="/">Fit-Check</a>
+  <header class="lander-bar">
+    <div class="lander-bar-in">
+      <a class="lander-mark" href="/">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+          <path d="M12 2.6 2.8 9.4V21h18.4V9.4L12 2.6Z" fill="#2563EB"/>
+          <path d="M12 10.4v6.4M8.8 13.6h6.4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span><b>Fit</b>Check</span>
+      </a>
+      <nav class="lander-nav">
+        <a href="/offer">Give equipment</a>
+        <a href="/clinic">Need equipment</a>
+        <span class="lander-avatar" aria-hidden="true">S</span>
+      </nav>
     </div>
   </header>
   {% endblock %}
@@ -20,10 +31,8 @@
     {% block content %}{% endblock %}
   </main>
   {% block footer %}
-  <footer class="footer">
-    <div class="footer-in">
-      <span>Grounded in IEC 60601-1 and WHO Annex 1 standards</span>
-    </div>
+  <footer class="lander-footer">
+    <p>Grounded in IEC 60601-1 and WHO Annex 1 standards</p>
   </footer>
   {% endblock %}
 </body>

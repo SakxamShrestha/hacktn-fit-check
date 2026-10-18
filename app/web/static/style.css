@@ -1,5 +1,5 @@
-/* Fit-Check: a clinical field terminal. Dark by default, because that is what
-   this is read on - a laptop in a biomedical workshop, not a brochure.
+/* Fit-Check. One palette, light, used everywhere: the landing page and the
+   working pages are the same product and should not look like two.
 
    Technical values carry the monospace face and ordinary prose does not. That
    split is the whole typographic system: if it is a rating, a standard, a
@@ -9,31 +9,31 @@
 
 :root {
   /* surfaces */
-  --plate:  #0B0E14;   /* page */
-  --face:   #121721;   /* panel */
-  --raise:  #19202C;   /* panel on panel */
-  --rule:   #212838;   /* hairline */
+  --plate:  #F7F9FC;   /* page */
+  --face:   #FFFFFF;   /* panel */
+  --raise:  #F3F4F6;   /* panel on panel */
+  --rule:   #E5E7EB;   /* hairline */
+  --edge:   #CBD5E1;   /* hairline under a pointer */
 
   /* text */
-  --ink:    #E9EEF8;   /* primary */
-  --etch:   #A3B0C6;   /* secondary, AA on --face at body size */
+  --ink:    #0F172A;   /* primary */
+  --etch:   #5B6779;   /* secondary, AA on white and on --plate */
+  --faint:  #667080;   /* placeholders and empty values; AA on both surfaces */
 
-  /* Clinical blue. The fill and the text tone are different colours on
-     purpose: #3B82F6 reaches only 4.88:1 on --face, so text uses the lighter
-     --accent-text (7.06:1) and the saturated tone is kept for fills, borders
-     and the scanning reticle, where contrast is not a reading requirement. */
-  --accent:      #3B82F6;
-  --accent-deep: #2563EB;
-  --accent-text: #60A5FA;
-  --accent-wash: rgba(59, 130, 246, 0.10);
-  --accent-line: rgba(59, 130, 246, 0.32);
+  /* clinical blue: actions, links, reticles */
+  --accent:      #2563EB;
+  --accent-deep: #1D4ED8;
+  --accent-text: #1D4ED8;
+  --accent-wash: rgba(37, 99, 235, 0.07);
+  --accent-line: rgba(37, 99, 235, 0.25);
 
-  /* deterministic status. The wash/line pairs keep every badge on the same
-     10%/30% footing so no status shouts louder than its severity. */
-  --block:  #FB9090;  --block-wash: rgba(239, 68, 68, 0.10);  --block-line: rgba(239, 68, 68, 0.30);
-  --hold:   #FCD34D;  --hold-wash:  rgba(245, 158, 11, 0.10); --hold-line:  rgba(245, 158, 11, 0.30);
-  --clear:  #34D399;  --clear-wash: rgba(16, 185, 129, 0.10); --clear-line: rgba(16, 185, 129, 0.30);
-  --query:  #60A5FA;  --query-wash: var(--accent-wash);       --query-line: var(--accent-line);
+  /* Deterministic status. Every one of these clears AA against both white
+     and the page background; the wash/line pairs keep each badge on the same
+     footing so no status shouts louder than its severity. */
+  --block:  #B91C1C;  --block-wash: rgba(185, 28, 28, 0.07);  --block-line: rgba(185, 28, 28, 0.25);
+  --hold:   #B45309;  --hold-wash:  rgba(180, 83, 9, 0.08);   --hold-line:  rgba(180, 83, 9, 0.25);
+  --clear:  #047857;  --clear-wash: rgba(4, 120, 87, 0.07);   --clear-line: rgba(4, 120, 87, 0.25);
+  --query:  #1D4ED8;  --query-wash: var(--accent-wash);       --query-line: var(--accent-line);
 
   --display: 'Inter', system-ui, sans-serif;
   --text: 'Inter', system-ui, sans-serif;
@@ -62,32 +62,7 @@ body {
 /* The page is a workstation, not a document: the bar spans the viewport and
    the working area is a wide grid, so panels sit beside each other instead of
    stacking down a narrow column. */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--face);
-  border-bottom: 1px solid var(--rule);
-}
-.topbar-in {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--s5);
-  height: 52px;
-  display: flex;
-  align-items: center;
-  gap: var(--s4);
-}
-/* Two items only: the mark and the live rule count. */
-
-.mark {
-  font: 800 17px/1 var(--display);
-  letter-spacing: -0.03em;
-  color: var(--ink);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.deck { max-width: 1280px; margin: 0 auto; padding: var(--s5) var(--s5) var(--s7); }
+.deck { max-width: 1200px; margin: 0 auto; padding: var(--s6) var(--s5) var(--s6); }
 
 /* Two panels of unequal weight: the working surface and its readout. */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); align-items: start; }
@@ -96,7 +71,6 @@ body {
 
 @media (max-width: 900px) {
   .split, .split-wide { grid-template-columns: 1fr; }
-  .topbar-in { height: auto; padding: var(--s3) var(--s4); flex-wrap: wrap; }
   .deck { padding: var(--s4) var(--s4) var(--s6); }
 }
 
@@ -108,7 +82,7 @@ body {
   border-radius: 8px;
   padding: var(--s5);
   margin: 0 0 var(--s4);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 .plate-tight { padding: var(--s5); }
 
@@ -138,8 +112,8 @@ input[type="text"], textarea, select {
   padding: var(--s3) var(--s4);
   width: 100%;
 }
-input[type="text"]:hover, textarea:hover, select:hover { border-color: #2E3850; }
-input[type="text"]::placeholder, textarea::placeholder { color: #5A6880; }
+input[type="text"]:hover, textarea:hover, select:hover { border-color: var(--edge); }
+input[type="text"]::placeholder, textarea::placeholder { color: var(--faint); }
 textarea { resize: vertical; min-height: 128px; }
 input[type="text"]:focus-visible, textarea:focus-visible, select:focus-visible,
 button:focus-visible, a:focus-visible, .pick:focus-within, .tile:focus-within {
@@ -162,18 +136,6 @@ input[type="text"]:focus, textarea:focus, select:focus {
   cursor: pointer;
 }
 .nameplate:hover { border-color: var(--etch); }
-.nameplate-grid {
-  display: grid;
-  grid-template-columns: auto minmax(90px, 200px) auto minmax(90px, 200px);
-  justify-content: start;
-  gap: var(--s2) var(--s4);
-  font-size: 13px;
-  color: var(--etch);
-  margin-bottom: var(--s4);
-}
-.nameplate-grid b { font-weight: 600; }
-.nameplate-grid u { text-decoration: none; border-bottom: 1px solid var(--rule); min-width: 64px; }
-.nameplate-call { font-weight: 600; font-size: 15px; color: var(--ink); }
 .nameplate input[type="file"] { margin-top: var(--s3); font: inherit; font-size: 14px; color: var(--etch); }
 
 button.go, a.go {
@@ -360,22 +322,10 @@ tr.is-good .what { border-left-color: var(--clear); }
   h1 { font-size: 31px; }
   .ident-name { font-size: 25px; }
   .grid .what, .grid .from { white-space: normal; }
-  .nameplate-grid { grid-template-columns: auto 1fr; }
 }
 
 /* ---- two doors ------------------------------------------------------- */
 
-.doors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); margin: var(--s5) 0; }
-.door {
-  display: flex; flex-direction: column; gap: var(--s2);
-  border: 1px solid var(--rule); border-radius: 3px;
-  padding: var(--s5); text-decoration: none; color: var(--ink);
-  background: var(--plate);
-}
-.door:hover { border-color: var(--ink); }
-.door-name { font: 700 20px/1.2 var(--display); letter-spacing: -0.015em; }
-.door-note { font-size: 14px; color: var(--etch); }
-.door-go { margin-top: var(--s3); font-weight: 600; font-size: 14px; }
 
 /* ---- form furniture -------------------------------------------------- */
 
@@ -395,7 +345,6 @@ select {
 .candidate-name { font: 700 20px/1.2 var(--display); letter-spacing: -0.015em; margin: 0; }
 .candidate-donor { color: var(--etch); font-size: 14px; margin: var(--s1) 0 0; }
 .candidate-meta { display: flex; gap: var(--s2); align-items: center; flex-wrap: wrap; }
-.candidate-needs { font-size: 14px; margin: var(--s3) 0 0; max-width: 72ch; }
 .candidate-act { margin-top: var(--s4); }
 
 .confirm-acts { display: flex; gap: var(--s4); flex-wrap: wrap; margin: var(--s5) 0 var(--s3); }
@@ -531,40 +480,10 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
 
 /* ---- hero badge and demo presets ------------------------------------- */
 
-.badge {
-  display: inline-block;
-  font: 500 12px/1.6 var(--mono);
-  color: var(--accent-text);
-  background: var(--accent-wash);
-  border: 1px solid var(--accent-line);
-  border-radius: 999px;
-  padding: 3px var(--s3);
-  margin: 0 0 var(--s4);
-}
 
-.presets { margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--rule); }
-.presets-head { font-size: 14px; color: var(--etch); margin: 0 0 var(--s3); }
-.preset-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--s3); }
 
-.preset {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--s3) var(--s4);
-  background: var(--plate);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  text-decoration: none;
-  color: var(--ink);
-}
-.preset:hover { border-color: var(--accent); background: var(--accent-wash); }
-.preset-name { font-weight: 600; font-size: 14px; }
-.preset-where { font-size: 13px; color: var(--etch); }
-.preset-spec { font: 500 12px/1.6 var(--mono); color: var(--accent-text); margin-top: 2px; }
 
 /* Role cards: the two doors take different accents so they never blur. */
-.door:hover { border-color: var(--accent); background: var(--accent-wash); }
-.doors a[href="/clinic"]:hover { border-color: var(--clear); background: var(--clear-wash); }
 
 /* ---- recipient trust ------------------------------------------------- */
 
@@ -589,39 +508,8 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   color: var(--ink);
   overflow: hidden;
 }
-.role-rule { position: absolute; inset: 0 0 auto 0; height: 2px; }
-.role-donor .role-rule { background: var(--accent); }
-.role-clinic .role-rule { background: var(--clear); }
-.role-donor:hover { border-color: var(--accent-line); background: var(--accent-wash); }
-.role-clinic:hover { border-color: var(--clear-line); background: var(--clear-wash); }
 
-.role-kicker { font: 500 11px/1.6 var(--mono); color: var(--etch); }
-.role-donor .role-kicker { color: var(--accent-text); }
-.role-clinic .role-kicker { color: var(--clear); }
-.role-name { font: 700 23px/1.2 var(--display); letter-spacing: -0.02em; margin: var(--s2) 0 var(--s4); }
 
-.role-points { margin: 0 0 var(--s5); padding: 0; list-style: none; display: grid; gap: var(--s2); }
-.role-points li {
-  font-size: 14px;
-  color: var(--etch);
-  padding-left: var(--s4);
-  position: relative;
-  line-height: 1.5;
-}
-.role-points li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 9px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.55;
-}
-.role-go { margin-top: auto; font-weight: 600; font-size: 14px; }
-.role-donor .role-go { color: var(--accent-text); }
-.role-clinic .role-go { color: var(--clear); }
 
 /* ---- facility testbeds ------------------------------------------------ */
 
@@ -638,12 +526,11 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   border-bottom: 1px solid var(--rule);
 }
 .workbench .nameplate { margin-bottom: var(--s4); }
-.stack { display: flex; flex-direction: column; gap: var(--s4); }
 
 .inspector { position: sticky; top: 72px; }
 .inspector-table { margin-top: var(--s3); }
 .inspector-table td { padding: var(--s3) var(--s2); }
-.audit-value.is-empty { color: #8795AD; }
+.audit-value.is-empty { color: var(--faint); }
 .inspector-msg { font-size: 13px; color: var(--etch); margin: var(--s3) 0 0; min-height: 1.2em; }
 
 .go-quiet {
@@ -698,7 +585,7 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #3A465C;
+  background: var(--edge);
 }
 .tile .tile-name { font-size: 14px; }
 .tile:has(input:checked) { border-color: var(--clear-line); background: var(--clear-wash); }
@@ -711,12 +598,12 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
    present. The glow is the only non-functional flourish in the sheet, and it
    earns its place by making state readable at a glance across a grid. */
 .tile { transition: border-color 120ms ease, background 120ms ease; }
-.tile:hover { border-color: #39455C; }
+.tile:hover { border-color: var(--edge); }
 .tile:has(input:checked) .tile-dot {
   background: var(--clear);
   box-shadow: 0 0 8px var(--clear), 0 0 0 3px var(--clear-wash);
 }
-.tile:has(input:checked) .tile-name { color: #A7F3D0; }
+.tile:has(input:checked) .tile-name { color: #065F46; }
 
 @media (prefers-reduced-motion: reduce) {
   .tile { transition: none; }
@@ -729,9 +616,9 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
 .tag[data-source="nameplate"] { color: var(--clear); border-color: var(--clear-line); background: var(--clear-wash); }
 .tag[data-source="spec sheet"] { color: var(--accent-text); border-color: var(--accent-line); background: var(--accent-wash); }
 .tag[data-source="IEC 60601-1 default"],
-.tag[data-source="model knowledge"] { color: #C4B5FD; border-color: rgba(167, 139, 250, 0.32); background: rgba(167, 139, 250, 0.10); }
+.tag[data-source="model knowledge"] { color: #6D28D9; border-color: rgba(109, 40, 217, 0.25); background: rgba(109, 40, 217, 0.07); }
 .tag[data-source="unverified"],
-.tag[data-source="unknown"] { color: #94A2B8; border-color: var(--rule); background: var(--raise); }
+.tag[data-source="unknown"] { color: var(--faint); border-color: var(--rule); background: var(--raise); }
 
 /* ---- source tabs ------------------------------------------------------ */
 
@@ -771,7 +658,7 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   padding: var(--s2) var(--s3);
   margin-bottom: var(--s3);
 }
-.telemetry .dot { width: 7px; height: 7px; border-radius: 50%; background: #4A5670; }
+.telemetry .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--edge); }
 .telemetry.is-live { color: var(--clear); border-color: var(--clear-line); background: var(--clear-wash); }
 .telemetry.is-live .dot { background: var(--clear); box-shadow: 0 0 6px var(--clear); }
 .telemetry.is-working { color: var(--accent-text); border-color: var(--accent-line); background: var(--accent-wash); }
@@ -780,65 +667,19 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
 /* ---- role capability rows --------------------------------------------- */
 
 /* Testbed cards read as something you press. */
-.bed { transition: border-color 120ms ease, background 120ms ease; position: relative; }
-.bed::after {
-  content: "\2192";
-  position: absolute;
-  top: var(--s4);
-  right: var(--s4);
-  color: var(--etch);
-  font-size: 15px;
-}
-.bed:hover::after { color: var(--accent-text); }
-.bed-name { padding-right: var(--s5); }
 
 @media (prefers-reduced-motion: reduce) { .bed { transition: none; } }
 
 /* ---- role cards ------------------------------------------------------- */
 
-.role-line { color: var(--etch); font-size: 14px; line-height: 1.55; margin: 0 0 var(--s5); max-width: 46ch; }
 .role .go { margin-top: auto; text-decoration: none; }
-.go-clinic { background: #0F7A5A; border-color: var(--clear); }
-.go-clinic:hover { background: #14946E; }
 
 /* ---- compact testbed strip -------------------------------------------- */
 
-.beds-strip { margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--rule); }
-.beds-head { font: 500 11px/1.6 var(--mono); color: var(--etch); margin: 0 0 var(--s3); }
-.beds-row { display: flex; flex-wrap: wrap; gap: var(--s2); }
 
-.bed-chip {
-  display: flex;
-  align-items: baseline;
-  gap: var(--s3);
-  padding: var(--s2) var(--s3);
-  background: var(--face);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  text-decoration: none;
-  color: var(--ink);
-  transition: border-color 120ms ease, background 120ms ease;
-}
-.bed-chip:hover { border-color: var(--accent); background: var(--accent-wash); }
-.chip-name { font-size: 13px; font-weight: 600; white-space: nowrap; }
-.chip-specs { font: 400 11px/1 var(--mono); color: var(--etch); white-space: nowrap; }
-.chip-specs b { font-weight: 600; color: var(--ink); }
-.chip-specs b.is-hot { color: var(--hold); }
 
 /* ---- footer ----------------------------------------------------------- */
 
-.footer { border-top: 1px solid var(--rule); margin-top: var(--s6); }
-.footer-in {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: var(--s4) var(--s5);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s3) var(--s5);
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--etch);
-}
 
 @media (prefers-reduced-motion: reduce) { .bed-chip { transition: none; } }
 
@@ -862,7 +703,7 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   border-radius: 8px;
   cursor: pointer;
 }
-.option:hover { border-color: #39455C; }
+.option:hover { border-color: var(--edge); }
 .option:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
 .option:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .option input { accent-color: var(--accent); margin: 0; }
@@ -905,30 +746,6 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   .option-far, .option-why { grid-column: 2 / -1; text-align: left; }
 }
 
-.role-alt { display: inline-block; margin-top: var(--s3); font-size: 13px; color: var(--etch); text-decoration: none; }
-.role-alt:hover { color: var(--clear); text-decoration: underline; }
-
-/* ======================================================================
-   The landing page runs light while the rest of the app runs dark. The
-   tokens are redefined on body.lander so every shared component adapts
-   without a second copy of its rules.
-   ====================================================================== */
-
-body.lander {
-  --plate:  #F7F9FC;
-  --face:   #FFFFFF;
-  --raise:  #F3F4F6;
-  --rule:   #E5E7EB;
-  --ink:    #0F172A;
-  --etch:   #5B6779;
-  --accent:      #2563EB;
-  --accent-deep: #1D4ED8;
-  --accent-text: #1D4ED8;
-  --accent-wash: rgba(37, 99, 235, 0.07);
-  --accent-line: rgba(37, 99, 235, 0.25);
-  background: var(--plate);
-  color: var(--ink);
-}
 
 /* ---- landing bar ------------------------------------------------------ */
 
@@ -970,7 +787,7 @@ body.lander {
 
 /* ---- hero ------------------------------------------------------------- */
 
-body.lander .deck { max-width: 1200px; padding: var(--s7) var(--s5) var(--s6); }
+body.lander .deck { padding-top: var(--s7); }
 
 .lander-hero { text-align: center; }
 .lander-hero h1 {
