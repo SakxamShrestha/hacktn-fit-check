@@ -1049,26 +1049,6 @@ body.lander .deck { max-width: 1200px; padding: var(--s7) var(--s5) var(--s6); }
 .lander-cta:hover { background: var(--accent-deep); }
 .lander-cta:focus-visible { outline: 3px solid var(--accent-line); outline-offset: 3px; }
 
-/* ---- seeded clinics --------------------------------------------------- */
-
-.lander-beds { max-width: 880px; margin: var(--s6) auto 0; text-align: center; }
-.lander-beds > p { font-size: 13px; color: var(--etch); margin: 0 0 var(--s3); }
-.lander-bed-row { display: flex; flex-wrap: wrap; gap: var(--s2); justify-content: center; }
-.lander-bed {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--s3) var(--s4);
-  background: var(--face);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  text-decoration: none;
-  color: var(--ink);
-}
-.lander-bed:hover { border-color: var(--accent); background: var(--accent-wash); }
-.lander-bed b { font-size: 13px; font-weight: 600; }
-.lander-bed span { font: 400 11px/1.4 var(--mono); color: var(--etch); }
-
 /* ---- landing footer --------------------------------------------------- */
 
 .lander-footer {
@@ -1095,3 +1075,5 @@ body.lander .deck { max-width: 1200px; padding: var(--s7) var(--s5) var(--s6); }
   .lander-card:hover { transform: none; }
   .lander-card:hover .lander-shot img { transform: none; }
 }
+
+.form-foot { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; }

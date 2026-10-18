@@ -54,27 +54,8 @@ def _error(request: Request, message: str, back: str = "/") -> HTMLResponse:
 
 @router.get("/", response_class=HTMLResponse)
 def landing(request: Request) -> HTMLResponse:
-    """The landing workstation, with the seeded clinics as testbeds.
-
-    The telemetry on each card is read from the stored profile rather than
-    written into the template, so a figure on the front page cannot drift away
-    from the figure the screening actually uses.
-    """
-    testbeds = [
-        {
-            "slug": f.slug,
-            "name": f.name,
-            "country": f.country,
-            "voltage": f.mains_voltage_v,
-            "frequency": f.mains_frequency_hz,
-            "outages": f.outages_per_week,
-            "temp": f.ambient_temp_max_c,
-        }
-        for f in repo.list_facilities()
-    ]
-    return TEMPLATES.TemplateResponse(
-        request=request, name="landing.html", context={"testbeds": testbeds}
-    )
+    """The role-selection page. A visitor chooses a side before anything else."""
+    return TEMPLATES.TemplateResponse(request=request, name="landing.html", context={})
 
 
 # ---- donor side --------------------------------------------------------
@@ -197,7 +178,7 @@ async def facility_submit(request: Request) -> HTMLResponse:
     except (FormError, RepositoryError) as exc:
         return _error(request, str(exc), back="/clinic")
 
-    return RedirectResponse(url="/request", status_code=303)
+    return RedirectResponse(url="/request/upload", status_code=303)
 
 
 # ---- requests and matching --------------------------------------------

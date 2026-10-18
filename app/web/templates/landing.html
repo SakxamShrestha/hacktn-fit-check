@@ -61,20 +61,6 @@
   </article>
 </div>
 
-{% if testbeds %}
-<section class="lander-beds">
-  <p>Or try a seeded clinic</p>
-  <div class="lander-bed-row">
-    {% for bed in testbeds %}
-    <a class="lander-bed" href="/request/upload?facility={{ bed.slug }}">
-      <b>{{ bed.name }}</b>
-      <span>{{ bed.voltage }} V &middot; {{ bed.frequency }} Hz &middot;
-            {{ bed.outages }}/wk &middot; {{ bed.temp }}&deg;C</span>
-    </a>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
 {% endblock %}
 
 {% block footer %}
