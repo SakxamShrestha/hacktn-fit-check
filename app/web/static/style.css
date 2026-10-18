@@ -907,3 +907,191 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
 
 .role-alt { display: inline-block; margin-top: var(--s3); font-size: 13px; color: var(--etch); text-decoration: none; }
 .role-alt:hover { color: var(--clear); text-decoration: underline; }
+
+/* ======================================================================
+   The landing page runs light while the rest of the app runs dark. The
+   tokens are redefined on body.lander so every shared component adapts
+   without a second copy of its rules.
+   ====================================================================== */
+
+body.lander {
+  --plate:  #F7F9FC;
+  --face:   #FFFFFF;
+  --raise:  #F3F4F6;
+  --rule:   #E5E7EB;
+  --ink:    #0F172A;
+  --etch:   #5B6779;
+  --accent:      #2563EB;
+  --accent-deep: #1D4ED8;
+  --accent-text: #1D4ED8;
+  --accent-wash: rgba(37, 99, 235, 0.07);
+  --accent-line: rgba(37, 99, 235, 0.25);
+  background: var(--plate);
+  color: var(--ink);
+}
+
+/* ---- landing bar ------------------------------------------------------ */
+
+.lander-bar { background: var(--face); border-bottom: 1px solid var(--rule); }
+.lander-bar-in {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--s5);
+  height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+.lander-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font: 800 23px/1 var(--display);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.lander-mark b { color: var(--accent); font-weight: 800; }
+
+.lander-nav { display: flex; align-items: center; gap: var(--s5); }
+.lander-nav a { font-size: 15px; color: #374151; text-decoration: none; }
+.lander-nav a:hover { color: var(--accent-deep); }
+.lander-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #1E3A4C;
+  color: #fff;
+  font: 600 14px/34px var(--text);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ---- hero ------------------------------------------------------------- */
+
+body.lander .deck { max-width: 1200px; padding: var(--s7) var(--s5) var(--s6); }
+
+.lander-hero { text-align: center; }
+.lander-hero h1 {
+  font: 800 clamp(34px, 5vw, 54px)/1.08 var(--display);
+  letter-spacing: -0.035em;
+  margin: 0 auto var(--s4);
+  max-width: 18ch;
+}
+.lander-hero > p {
+  font-size: 18px;
+  color: #4B5563;
+  line-height: 1.55;
+  margin: 0 auto;
+  max-width: 44ch;
+}
+.lander-rule {
+  display: block;
+  width: 96px;
+  height: 2px;
+  margin: var(--s6) auto var(--s6);
+  background: var(--rule);
+  border-radius: 999px;
+}
+.lander-hero h2 {
+  font: 800 25px/1.2 var(--display);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--s6);
+}
+
+/* ---- role cards ------------------------------------------------------- */
+
+.lander-roles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s5);
+  max-width: 880px;
+  margin: 0 auto;
+}
+.lander-card {
+  background: var(--face);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+.lander-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.22);
+}
+.lander-shot { aspect-ratio: 16 / 10; overflow: hidden; background: var(--raise); }
+.lander-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 500ms ease;
+}
+.lander-card:hover .lander-shot img { transform: scale(1.05); }
+
+.lander-body { padding: var(--s5); text-align: center; display: flex; flex-direction: column; flex: 1; }
+.lander-body h3 { font: 800 24px/1.2 var(--display); letter-spacing: -0.02em; margin: 0 0 var(--s3); }
+.lander-body p { font-size: 15px; color: #4B5563; line-height: 1.55; margin: 0 0 var(--s5); }
+
+.lander-cta {
+  margin-top: auto;
+  display: block;
+  background: var(--accent);
+  color: #fff;
+  font: 600 16px/1 var(--text);
+  text-decoration: none;
+  padding: 15px var(--s5);
+  border-radius: 10px;
+}
+.lander-cta:hover { background: var(--accent-deep); }
+.lander-cta:focus-visible { outline: 3px solid var(--accent-line); outline-offset: 3px; }
+
+/* ---- seeded clinics --------------------------------------------------- */
+
+.lander-beds { max-width: 880px; margin: var(--s6) auto 0; text-align: center; }
+.lander-beds > p { font-size: 13px; color: var(--etch); margin: 0 0 var(--s3); }
+.lander-bed-row { display: flex; flex-wrap: wrap; gap: var(--s2); justify-content: center; }
+.lander-bed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--s3) var(--s4);
+  background: var(--face);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.lander-bed:hover { border-color: var(--accent); background: var(--accent-wash); }
+.lander-bed b { font-size: 13px; font-weight: 600; }
+.lander-bed span { font: 400 11px/1.4 var(--mono); color: var(--etch); }
+
+/* ---- landing footer --------------------------------------------------- */
+
+.lander-footer {
+  border-top: 1px solid var(--rule);
+  margin-top: var(--s7);
+  padding: var(--s5);
+  text-align: center;
+}
+.lander-footer p { margin: 0; font-size: 13px; color: var(--etch); }
+.lander-footer-links { margin-top: var(--s2) !important; display: flex; gap: var(--s4); justify-content: center; flex-wrap: wrap; }
+.lander-footer-links a { color: var(--etch); text-decoration: none; font-size: 13px; }
+.lander-footer-links a:hover { text-decoration: underline; }
+
+@media (max-width: 760px) {
+  .lander-roles { grid-template-columns: 1fr; }
+  .lander-bar-in { padding: 0 var(--s4); height: 58px; }
+  .lander-nav { gap: var(--s3); }
+  .lander-nav a { font-size: 13px; }
+  body.lander .deck { padding: var(--s6) var(--s4) var(--s5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lander-card, .lander-shot img { transition: none; }
+  .lander-card:hover { transform: none; }
+  .lander-card:hover .lander-shot img { transform: none; }
+}

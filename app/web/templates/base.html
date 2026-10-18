@@ -8,19 +8,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
+  {% block chrome %}
   <header class="topbar">
     <div class="topbar-in">
       <a class="mark" href="/">Fit-Check</a>
     </div>
   </header>
+  {% endblock %}
   <main class="deck">
     {% block content %}{% endblock %}
   </main>
+  {% block footer %}
   <footer class="footer">
     <div class="footer-in">
       <span>Grounded in IEC 60601-1 and WHO Annex 1 standards</span>
     </div>
   </footer>
+  {% endblock %}
 </body>
 </html>

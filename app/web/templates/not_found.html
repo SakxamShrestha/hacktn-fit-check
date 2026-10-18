@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Page not found &middot; Fit-Check{% endblock %}
+{% block content %}
+<section class="masthead">
+  <h1>That page does not exist</h1>
+  <p class="sub">The address <code>{{ path }}</code> is not part of this service.</p>
+</section>
+
+<section class="plate">
+  <p><a class="go" href="/" style="text-decoration:none;display:inline-block">Back to the start</a></p>
+</section>
+{% endblock %}

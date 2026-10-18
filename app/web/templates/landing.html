@@ -1,48 +1,89 @@
 {% extends "base.html" %}
 {% block title %}Fit-Check{% endblock %}
-{% block content %}
+{% block body_class %}lander{% endblock %}
 
-<section class="masthead">
-  <h1>Equipment that fits the place it is going</h1>
-  <p class="sub">Every donation is screened against receiving facility power,
-     climate, utilities and technical staffing before booking a container.</p>
+{% block chrome %}
+<header class="lander-bar">
+  <div class="lander-bar-in">
+    <a class="lander-mark" href="/">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+        <path d="M12 2.6 2.8 9.4V21h18.4V9.4L12 2.6Z" fill="#2563EB"/>
+        <path d="M12 10.4v6.4M8.8 13.6h6.4" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span><b>Fit</b>Check</span>
+    </a>
+    <nav class="lander-nav">
+      <a href="/about">About us</a>
+      <a href="/contact">Contact</a>
+      <a href="/help">Get help</a>
+      <span class="lander-avatar" aria-hidden="true">S</span>
+    </nav>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="lander-hero">
+  <h1>Partner with us to give the gift of life</h1>
+  <p>Empowering donors and clinics to connect seamlessly on a trusted,
+     secure healthcare network.</p>
+  <span class="lander-rule" aria-hidden="true"></span>
+  <h2>Select your role to get started</h2>
 </section>
 
-<div class="split">
-  <section class="role role-donor">
-    <span class="role-rule" aria-hidden="true"></span>
-    <span class="role-kicker">Donor</span>
-    <h2 class="role-name">I have equipment to give</h2>
-    <p class="role-line">Upload a rating plate photo or paste the specs. We extract
-       the device facts and screen them against real clinic conditions.</p>
-    <a class="go" href="/offer">Post an offer &rarr;</a>
-  </section>
+<div class="lander-roles">
+  <article class="lander-card">
+    <div class="lander-shot">
+      <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=900&q=75"
+           alt="A clinician reviewing paperwork with a visitor in a consulting room"
+           loading="lazy" width="900" height="563">
+    </div>
+    <div class="lander-body">
+      <h3>I have equipment to give</h3>
+      <p>Photograph the rating plate or paste the specifications. We read the
+         device facts and screen them against real clinic conditions.</p>
+      <a class="lander-cta" href="/offer">Get started</a>
+    </div>
+  </article>
 
-  <section class="role role-clinic">
-    <span class="role-rule" aria-hidden="true"></span>
-    <span class="role-kicker">Recipient</span>
-    <h2 class="role-name">I need equipment</h2>
-    <p class="role-line">State your mains voltage, frequency, outages and ward
-       climate once. Every offer is checked against it automatically.</p>
-    <a class="go go-clinic" href="/clinic">Register a facility &rarr;</a>
-    <a class="role-alt" href="/request/upload">Already registered? Upload your equipment list &rarr;</a>
-  </section>
+  <article class="lander-card">
+    <div class="lander-shot">
+      <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=900&q=75"
+           alt="A stethoscope beside a laptop in a clinical office"
+           loading="lazy" width="900" height="563">
+    </div>
+    <div class="lander-body">
+      <h3>I need equipment</h3>
+      <p>State your mains supply, ward climate and utilities once. Upload the
+         list you already keep, and every offer is checked against it.</p>
+      <a class="lander-cta" href="/clinic">Get started</a>
+    </div>
+  </article>
 </div>
 
-<section class="beds-strip">
-  <p class="beds-head">Try a seeded clinic</p>
-  <div class="beds-row">
+{% if testbeds %}
+<section class="lander-beds">
+  <p>Or try a seeded clinic</p>
+  <div class="lander-bed-row">
     {% for bed in testbeds %}
-    <a class="bed-chip" href="/request/upload?facility={{ bed.slug }}">
-      <span class="chip-name">{{ bed.name }}</span>
-      <span class="chip-specs">
-        <b>{{ bed.voltage }}</b>V
-        <b>{{ bed.frequency }}</b>Hz
-        <b class="{{ 'is-hot' if bed.outages >= 3 }}">{{ bed.outages }}</b>/wk
-        <b class="{{ 'is-hot' if bed.temp >= 40 }}">{{ bed.temp }}</b>&deg;C
-      </span>
+    <a class="lander-bed" href="/request/upload?facility={{ bed.slug }}">
+      <b>{{ bed.name }}</b>
+      <span>{{ bed.voltage }} V &middot; {{ bed.frequency }} Hz &middot;
+            {{ bed.outages }}/wk &middot; {{ bed.temp }}&deg;C</span>
     </a>
     {% endfor %}
   </div>
 </section>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+<footer class="lander-footer">
+  <p>&copy; 2026 Fit-Check Healthcare Network. All rights reserved.</p>
+  <p class="lander-footer-links">
+    <a href="/privacy">Privacy policy</a>
+    <a href="/terms">Terms of service</a>
+    <a href="/accessibility">Accessibility</a>
+  </p>
+</footer>
 {% endblock %}
