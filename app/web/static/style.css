@@ -853,10 +853,6 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
   font-size: 12px;
   color: var(--etch);
 }
-.footer-links { display: flex; gap: var(--s4); align-items: center; }
-.footer-links a { color: var(--etch); text-decoration: none; }
-.footer-links a:hover { color: var(--accent-text); text-decoration: underline; }
-.footer-mark { font-family: var(--mono); color: #6F7D96; }
 
 @media (prefers-reduced-motion: reduce) { .bed-chip { transition: none; } }
 
