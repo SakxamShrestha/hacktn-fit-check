@@ -72,14 +72,3 @@ def device_kind(device: DeviceFacts) -> str:
         start = line.lower().index(label.lower())
         line = (line[:start] + line[start + len(label):]).strip(" ,.-\u2013")
     return line[:90]
-
-
-def rule_count() -> int:
-    """How many deterministic checks are registered.
-
-    Rendered into the top bar. Read from the registry rather than written as a
-    number, because the number has already been wrong once in this interface.
-    """
-    from app.checks.runner import ALL_CHECKS, ROUTE_CHECKS
-
-    return len(ALL_CHECKS) + len(ROUTE_CHECKS)

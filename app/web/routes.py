@@ -22,11 +22,9 @@ from app.web.presenters import (
     TONE_BY_STATUS,
     device_kind,
     identity_pairs,
-    rule_count,
 )
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
-TEMPLATES.env.globals["rule_count"] = rule_count()
 router = APIRouter()
 
 def _error(request: Request, message: str, back: str = "/donor") -> HTMLResponse:

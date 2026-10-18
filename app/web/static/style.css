@@ -76,7 +76,6 @@ body {
   height: 52px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--s4);
 }
 /* Two items only: the mark and the live rule count. */
@@ -87,21 +86,6 @@ body {
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
-}
-.status {
-  display: flex;
-  align-items: center;
-  gap: var(--s2);
-  font: 500 12px/1.6 var(--mono);
-  color: var(--etch);
-  white-space: nowrap;
-}
-.status .dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--clear);
-  box-shadow: 0 0 0 3px var(--clear-wash);
 }
 .deck { max-width: 1280px; margin: 0 auto; padding: var(--s5) var(--s5) var(--s7); }
 
@@ -114,7 +98,6 @@ body {
   .split, .split-wide { grid-template-columns: 1fr; }
   .topbar-in { height: auto; padding: var(--s3) var(--s4); flex-wrap: wrap; }
   .deck { padding: var(--s4) var(--s4) var(--s6); }
-  .status { font-size: 10px; }
 }
 
 /* ---- plate --------------------------------------------------------- */

@@ -39,10 +39,9 @@ from app.reference.facility_registry import corroborates, find_candidates
 from app.storage.photos import discard_photo, fetch_photo, store_photo
 from app.web import forms
 from app.web.forms import FormError
-from app.web.presenters import rule_count, TONE_BY_OUTCOME, TONE_BY_STATUS
+from app.web.presenters import TONE_BY_OUTCOME, TONE_BY_STATUS
 
 TEMPLATES = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
-TEMPLATES.env.globals["rule_count"] = rule_count()
 router = APIRouter()
 
 
