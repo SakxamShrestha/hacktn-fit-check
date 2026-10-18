@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Get help &middot; Fit-Check{% endblock %}
+{% block content %}
+<section class="masthead">
+  <h1>Get help</h1>
+  <p class="sub">The questions that come up most often, on both sides of a donation.</p>
+</section>
+
+<div class="split">
+  <section class="plate">
+    <h2 class="panel-head">If you are donating</h2>
+
+    <h3 class="help-q">What do I need before I start?</h3>
+    <p>The rating plate is enough. It is the stamped metal plate on the back of
+       the machine or beside the power inlet, and it carries the maker, the
+       model, the voltage, the frequency and usually the year.</p>
+
+    <h3 class="help-q">What if I cannot photograph it?</h3>
+    <p>Paste whatever you have instead &mdash; a specification sheet, the label
+       text, or what your biomedical department told you. Anything you leave out
+       stays marked unknown and comes back as a question rather than a guess.</p>
+
+    <h3 class="help-q">Am I committing to send it?</h3>
+    <p>No. Posting an offer puts it in front of clinics that can actually run it.
+       You are asked to confirm the stock still exists before anything moves, and
+       saying no is useful &mdash; the clinic is told straight away.</p>
+
+    <h3 class="help-q">Why was my device rejected?</h3>
+    <p>It was not rejected; it was found not to fit <em>that</em> clinic. The
+       verdict names the check that blocked it. The same device may be fine
+       somewhere else, and often is.</p>
+  </section>
+
+  <section class="plate">
+    <h2 class="panel-head">If you need equipment</h2>
+
+    <h3 class="help-q">Why do you ask about my building?</h3>
+    <p>Because that is what decides whether a machine works. Voltage, frequency,
+       outages, ward temperature, humidity, oxygen, compressed air, distilled
+       water and who can maintain it. You enter it once.</p>
+
+    <h3 class="help-q">Can I upload the list I already keep?</h3>
+    <p>Yes. A spreadsheet or CSV with a column of equipment names, and a quantity
+       column if you keep one. You can also just write out what you need in
+       ordinary sentences.</p>
+
+    <h3 class="help-q">Why is an item greyed out?</h3>
+    <p>It did not pass screening for your facility, and the reason is printed
+       beside it. We leave it visible rather than hiding it, so you can see what
+       would have to change for it to work.</p>
+
+    <h3 class="help-q">Nothing I asked for is available.</h3>
+    <p>Where a clinically equivalent device exists and passes, it is offered
+       underneath with the reason it can stand in. A substitute that also fails
+       is never offered.</p>
+
+    <h3 class="help-q">What happens after I choose?</h3>
+    <p>We confirm availability with the donor and come back to you. Nothing is
+       reserved until a donor has said the stock is still there.</p>
+  </section>
+</div>
+
+<section class="plate">
+  <h2 class="panel-head">Still stuck?</h2>
+  <p>Write to <span class="ref">hello@fit-check.example</span>, or see
+     <a class="link" href="/about">how the screening works</a>.</p>
+</section>
+{% endblock %}

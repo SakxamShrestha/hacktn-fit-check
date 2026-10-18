@@ -3,8 +3,7 @@
 {% block content %}
 <section class="masthead">
   <h1>Facility specification</h1>
-  <p class="sub">This is the questionnaire Project C.U.R.E. sends someone on a plane
-     to fill in. You fill it once, and every offer you are ever shown is screened
+  <p class="sub">Fill this in once. Every offer you are ever shown is screened
      against it.</p>
 </section>
 
@@ -18,7 +17,12 @@
       </div>
       <div class="field">
         <label class="name" for="f-country">Country</label>
-        <input type="text" id="f-country" name="country" placeholder="Uganda">
+        <select id="f-country" name="country">
+          <option value="" disabled selected>Choose a country</option>
+          {% for name in countries %}
+          <option value="{{ name }}">{{ name }}</option>
+          {% endfor %}
+        </select>
         <p class="note">Sets grid voltage and frequency automatically. You can correct them.</p>
       </div>
     </div>

@@ -894,3 +894,13 @@ body.lander .deck { padding-top: var(--s7); }
 }
 
 .form-foot { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; }
+
+/* ---- help questions ---------------------------------------------------- */
+
+.help-q {
+  font: 600 15px/1.4 var(--text);
+  color: var(--ink);
+  margin: var(--s4) 0 var(--s2);
+}
+.help-q:first-of-type { margin-top: var(--s3); }
+.plate > p { max-width: 62ch; }

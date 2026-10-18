@@ -34,7 +34,7 @@ from app.matching.coverage import LineCoverage
 from app.matching.pipeline import propose_match, rank_candidates
 from app.matching.substitutes import find_substitutes
 from app.matching.verification import confirm, request_confirmation, withdraw
-from app.reference.country_power import country_centroid, lookup
+from app.reference.country_power import country_centroid, known_countries, lookup
 from app.reference.facility_registry import corroborates, find_candidates
 from app.storage.photos import discard_photo, fetch_photo, store_photo
 from app.web import forms
@@ -134,7 +134,10 @@ def offer_posted(request: Request, offer_id: int) -> HTMLResponse:
 
 @router.get("/clinic", response_class=HTMLResponse)
 def facility_form(request: Request) -> HTMLResponse:
-    return TEMPLATES.TemplateResponse(request=request, name="facility_form.html", context={})
+    return TEMPLATES.TemplateResponse(
+        request=request, name="facility_form.html",
+        context={"countries": known_countries()},
+    )
 
 
 @router.post("/clinic", response_class=HTMLResponse)
@@ -442,6 +445,27 @@ def confirm_submit(request: Request, token: str, answer: str = Form(...)) -> HTM
         return _error(request, str(exc))
 
     return RedirectResponse(url=f"/confirm/{token}", status_code=303)
+
+
+# ---- standing pages ------------------------------------------------------
+
+# Content pages with no state of their own, named in the header and footer.
+STANDING_PAGES = ("about", "contact", "help")
+
+
+@router.get("/about", response_class=HTMLResponse)
+def about_page(request: Request) -> HTMLResponse:
+    return TEMPLATES.TemplateResponse(request=request, name="about.html", context={})
+
+
+@router.get("/contact", response_class=HTMLResponse)
+def contact_page(request: Request) -> HTMLResponse:
+    return TEMPLATES.TemplateResponse(request=request, name="contact.html", context={})
+
+
+@router.get("/help", response_class=HTMLResponse)
+def help_page(request: Request) -> HTMLResponse:
+    return TEMPLATES.TemplateResponse(request=request, name="help.html", context={})
 
 
 # ---- device photographs --------------------------------------------------

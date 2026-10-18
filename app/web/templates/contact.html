@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Contact &middot; Fit-Check{% endblock %}
+{% block content %}
+<section class="masthead">
+  <h1>Contact us</h1>
+  <p class="sub">Tell us which side of a donation you are on and we will put you
+     with the right person.</p>
+</section>
+
+<div class="split">
+  <section class="plate">
+    <h2 class="panel-head">Donating equipment</h2>
+    <p>Biomedical departments, manufacturers and individuals with surplus
+       equipment.</p>
+    <p class="ref">donations@fit-check.example</p>
+    <p class="note">Posting an offer does not commit you to anything. You are
+       asked to confirm the stock still exists before a clinic is told.</p>
+  </section>
+
+  <section class="plate">
+    <h2 class="panel-head">Receiving equipment</h2>
+    <p>Clinics, hospitals and the non-profits coordinating on their behalf.</p>
+    <p class="ref">clinics@fit-check.example</p>
+    <p class="note">You will be asked for your grid, ward climate, utilities and
+       staffing once. Every offer is then checked against it automatically.</p>
+  </section>
+</div>
+
+<section class="plate">
+  <h2 class="panel-head">Anything else</h2>
+  <div class="rowset">
+    <div>
+      <p class="ref">Press</p>
+      <p>press@fit-check.example</p>
+    </div>
+    <div>
+      <p class="ref">Security</p>
+      <p>security@fit-check.example</p>
+    </div>
+    <div>
+      <p class="ref">Everything else</p>
+      <p>hello@fit-check.example</p>
+    </div>
+  </div>
+  <p class="note">These addresses are placeholders for the HackTN 2026
+     prototype and are not monitored.</p>
+</section>
+{% endblock %}

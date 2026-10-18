@@ -180,6 +180,16 @@ _CENTROID_INDEX: Mapping[str, tuple[float, float]] = {
 }
 
 
+def known_countries() -> tuple[str, ...]:
+    """Every country the power table carries, alphabetically.
+
+    Offered as a list rather than a text box so a clinic cannot name a country
+    the table has no grid data for: typing one silently lost the voltage and
+    frequency lookup the whole screening depends on.
+    """
+    return tuple(sorted({row.country_name for row in _index().values()}))
+
+
 def country_centroid(country: str) -> tuple[float, float] | None:
     """Approximate (latitude, longitude) of a country's centre. None on a miss."""
     if not country or not country.strip():

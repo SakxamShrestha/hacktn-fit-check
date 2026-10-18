@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}About us &middot; Fit-Check{% endblock %}
+{% block content %}
+<section class="masthead">
+  <h1>About Fit-Check</h1>
+  <p class="sub">We screen donated medical equipment against the conditions of the
+     clinic receiving it, before anyone books a container.</p>
+</section>
+
+<div class="split">
+  <section class="plate">
+    <h2 class="panel-head">The problem</h2>
+    <p>A great deal of donated medical equipment arrives and never works. Not
+       because it is broken, but because it does not fit where it was sent.</p>
+    <p>A 110 volt ventilator on a 240 volt grid. A machine that needs piped
+       oxygen sent to a clinic with cylinders. A unit rated to 40&deg;C in a ward
+       that reaches 42&deg;C. Sterile stock that expires in the container.</p>
+    <p>Each of those is knowable in advance. Nobody checks, because checking
+       means holding the specification of the device against the real conditions
+       of the building, and that has always been done by hand.</p>
+  </section>
+
+  <section class="plate">
+    <h2 class="panel-head">How it works</h2>
+    <p>A donor photographs the rating plate or pastes the specification. A model
+       reads the facts off it and labels each one with where it came from &mdash;
+       the plate, a document, the standard, or nobody.</p>
+    <p>The decision is not made by the model. Fifteen constraint checks written
+       as ordinary code compare those facts against the clinic's recorded
+       conditions. Given the same facts they return the same verdict every time,
+       which is why a verdict cannot be invented.</p>
+    <p>Anything blocked stays visible with the reason. A screen is not a
+       clearance: a person still decides.</p>
+  </section>
+</div>
+
+<section class="plate">
+  <h2 class="panel-head">What we check</h2>
+  <div class="rowset">
+    <div>
+      <p class="ref">Power</p>
+      <p>Mains voltage, frequency, supply phase, and how often the grid fails.</p>
+    </div>
+    <div>
+      <p class="ref">Environment</p>
+      <p>Ward temperature and humidity against the device's rated range.</p>
+    </div>
+    <div>
+      <p class="ref">Utilities</p>
+      <p>Medical oxygen, compressed air and distilled water.</p>
+    </div>
+    <div>
+      <p class="ref">Support</p>
+      <p>Consumables, spare parts, manufacturer support and shelf life on arrival.</p>
+    </div>
+  </div>
+</section>
+
+<section class="plate">
+  <h2 class="panel-head">What we are built on</h2>
+  <p>The acceptance criteria in the World Health Organization's guidance on
+     medical device donations, Annex 1. The marking requirements and default
+     environmental conditions in IEC 60601-1. Published grid data for 243
+     countries, and the United States FDA device registry.</p>
+  <p class="note">Fit-Check is a screening tool, not a regulator, a shipper or a
+     clinical authority. We do not take custody of equipment and we do not
+     arrange freight.</p>
+</section>
+{% endblock %}
