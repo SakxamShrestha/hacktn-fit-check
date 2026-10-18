@@ -36,6 +36,9 @@ MIN_MATCH_QUANTITY = 1
 # instead of being treated as zero kilometres away.
 LOCATED_RANK = 0
 UNLOCATED_RANK = 1
+
+# Presentation only. Distances are computed and compared in kilometres.
+MILES_PER_KM = 0.621371
 UNLOCATED_DISTANCE_PLACEHOLDER = 0.0
 
 
@@ -57,6 +60,17 @@ class Candidate:
     def condition_count(self) -> int:
         """How many things must be shipped alongside for this to work."""
         return len(self.verdict.conditional)
+
+    @property
+    def distance_miles(self) -> float | None:
+        """The same distance in miles, for display only.
+
+        Every calculation in this package stays metric. Conversion happens at
+        the edge so the sort key and the haversine never see two units.
+        """
+        if self.distance_km is None:
+            return None
+        return self.distance_km * MILES_PER_KM
 
 
 def empty_intel(device: DeviceFacts, country: str) -> SupplyIntel:

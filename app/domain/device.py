@@ -26,6 +26,7 @@ class DeviceFacts:
     voltage_max_v: Fact = UNKNOWN
     frequencies_hz: Fact = UNKNOWN
     power_watts: Fact = UNKNOWN
+    needs_three_phase: Fact = UNKNOWN
     needs_stable_power: Fact = UNKNOWN
 
     temp_min_c: Fact = UNKNOWN
@@ -75,6 +76,7 @@ class DeviceFacts:
             "frequencies_hz",
             "voltage_min_v",
             "voltage_max_v",
+            "needs_three_phase",
             "year_of_manufacture",
             "consumables",
         )

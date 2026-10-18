@@ -9,6 +9,11 @@ from app.domain.result import CheckResult, CheckStatus
 
 TRANSFORMER_HEADROOM = 1.25
 
+# Named so the phase check describes a supply the same way every time it
+# says it, in a question and in a verdict a donor reads side by side.
+SINGLE_PHASE = "single-phase"
+THREE_PHASE = "three-phase"
+
 
 def check_frequency(
     device: DeviceFacts, facility: FacilityProfile, intel: SupplyIntel
@@ -92,4 +97,56 @@ def check_voltage(
         source=low.source,
         requirement=Requirement(RequirementKind.TRANSFORMER,
                                  f"A step transformer {rating}.", "voltage"),
+    )
+
+
+def check_supply_phase(
+    device: DeviceFacts, facility: FacilityProfile, intel: SupplyIntel
+) -> CheckResult:
+    needs = device.needs_three_phase
+    supply = THREE_PHASE if facility.has_three_phase_power else SINGLE_PHASE
+
+    if not needs.known:
+        return CheckResult(
+            key="phase",
+            label="Supply phase",
+            status=CheckStatus.NEEDS_INFO,
+            detail=f"The supply at {facility.name} is {supply}. "
+            "Whether the device needs three-phase power is not known.",
+            question="Does the device need a three-phase supply? "
+            'The rating plate prints the phase beside the voltage, usually as '
+            '"3~" or "3 PH"; a single-phase plate reads "1~" or says nothing.',
+            source=needs.source,
+        )
+
+    if not needs.value:
+        return CheckResult(
+            key="phase",
+            label="Supply phase",
+            status=CheckStatus.PASS,
+            detail=f"Runs on a {SINGLE_PHASE} supply, which {facility.name} has.",
+            source=needs.source,
+        )
+
+    if facility.has_three_phase_power:
+        return CheckResult(
+            key="phase",
+            label="Supply phase",
+            status=CheckStatus.PASS,
+            detail=f"Needs a {THREE_PHASE} supply, and {facility.name} has one.",
+            source=needs.source,
+        )
+
+    return CheckResult(
+        key="phase",
+        label="Supply phase",
+        status=CheckStatus.FAIL,
+        detail=f"Needs a {THREE_PHASE} supply, and {facility.name} is "
+        f"{SINGLE_PHASE} only. A phase converter sized for a machine this big "
+        "is not an accessory that ships in the crate, it is a rewiring job "
+        "for the building and a new connection from the utility.",
+        fix="Nothing shipped alongside closes this gap. Send a "
+        f"{SINGLE_PHASE} device of the same kind instead, such as a mobile "
+        "unit, which runs from the sockets the clinic already has.",
+        source=needs.source,
     )

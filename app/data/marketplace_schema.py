@@ -37,6 +37,7 @@ MATCH_ID_LENGTH = 12
 TOKEN_LENGTH = 64
 
 DEFAULT_QUANTITY = 1
+PHOTO_KEY_LENGTH = 128
 NO_QUANTITY = 0
 
 EMPTY_JSON_OBJECT = "{}"
@@ -78,6 +79,9 @@ offers = Table(
     Column("quantity_reserved", Integer, nullable=False, default=NO_QUANTITY),
     Column("quantity_shipped", Integer, nullable=False, default=NO_QUANTITY),
     Column("available_until", Date, nullable=True),
+    # Object Storage key for the donor's photograph. Blank when none was given
+    # or the upload failed; the page falls back to a placeholder either way.
+    Column("photo_key", String(PHOTO_KEY_LENGTH), nullable=False, default=""),
     Column("status", String(STATUS_LENGTH), nullable=False, index=True),
     Column("created_at", DateTime, nullable=False, server_default=func.now()),
 )

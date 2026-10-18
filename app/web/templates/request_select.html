@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Choose what to receive{% endblock %}
+{% block content %}
+<section class="masthead">
+  <p class="eyebrow">{{ facility.name }}, {{ facility.country }}</p>
+  <h1>Choose what to receive</h1>
+  <p class="sub">Only units that passed the screening for this facility can be chosen.
+     Anything blocked is still listed, with the check that stopped it.</p>
+</section>
+
+<form method="post" action="/request/{{ request_row.id }}/select" class="form">
+  {% for group in groups %}
+  {% set cover = group.coverage %}
+  <section class="plate">
+    <div class="pick-head">
+      <h2>{{ cover.line.label }}</h2>
+      <span class="pill {{ 'good' if cover.complete else 'hold' }}">{{ cover.headline }}</span>
+    </div>
+
+    {% if cover.candidates %}
+    <div class="options">
+      {% for c in cover.candidates %}
+      <label class="option">
+        <input type="radio" name="choice_{{ cover.line.device_type }}" value="{{ c.offer.id }}"
+               {% if loop.first %}checked{% endif %}>
+        <img class="option-shot" src="/photo/{{ c.offer.id }}" alt="" width="96" height="72">
+        <span class="option-body">
+          <span class="option-name">{{ c.offer.device.label }}</span>
+          <span class="option-from">{{ c.offer.donor_name }} &mdash;
+            {{ c.offer.origin.city }}{% if c.offer.origin.city %}, {% endif %}{{ c.offer.origin.country }}</span>
+        </span>
+        <span class="option-far">
+          {% if c.distance_miles is not none %}<b>{{ c.distance_miles | round | int }}</b> mi away{% else %}distance unknown{% endif %}
+          {% if c.shipment %}<i>about {{ c.shipment.transit_days }} days</i>{% endif %}
+        </span>
+        <span class="pill {{ tone[c.verdict.outcome] }}">{{ c.verdict.stamp }}</span>
+      </label>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if group.blocked %}
+    <div class="options options-blocked">
+      {% for b in group.blocked %}
+      <div class="option is-blocked">
+        <span class="option-lock" aria-hidden="true">&times;</span>
+        <img class="option-shot" src="/photo/{{ b.offer.id }}" alt="" width="96" height="72">
+        <span class="option-body">
+          <span class="option-name">{{ b.offer.device.label }}</span>
+          <span class="option-from">{{ b.offer.donor_name }}</span>
+        </span>
+        <span class="option-why"><b>{{ b.label }}</b> {{ b.detail }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not cover.candidates and not group.blocked %}
+    <p class="empty">No open offer of this kind at all. Nothing has been screened out;
+       there is simply none in the inventory yet.</p>
+    {% endif %}
+
+    {% if group.substitutes %}
+    <div class="swap">
+      <p class="swap-head">Nothing of that kind works here. These do the same job:</p>
+      {% for option in group.substitutes %}
+      <label class="option option-swap">
+        <input type="radio" name="choice_{{ cover.line.device_type }}" value="{{ option.candidate.offer.id }}">
+        <img class="option-shot" src="/photo/{{ option.candidate.offer.id }}" alt="" width="96" height="72">
+        <span class="option-body">
+          <span class="option-name">{{ option.candidate.offer.device.label }}</span>
+          <span class="option-from">{{ option.substitute.reason }}</span>
+        </span>
+        <span class="option-far">
+          {% if option.candidate.distance_miles is not none %}<b>{{ option.candidate.distance_miles | round | int }}</b> mi away{% endif %}
+        </span>
+        <span class="pill {{ tone[option.candidate.verdict.outcome] }}">{{ option.candidate.verdict.stamp }}</span>
+      </label>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  <button class="go" type="submit">Send this request</button>
+  <p class="note">Nothing is reserved yet. We confirm availability with the donor
+     hospitals before anything is held for you.</p>
+</form>
+{% endblock %}

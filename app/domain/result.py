@@ -78,6 +78,12 @@ class Verdict:
     @property
     def headline(self) -> str:
         if self.outcome is Outcome.WORKS:
+            # Nothing blocked it, but an unanswered check is not a passed one.
+            # Saying "all N pass" while N-2 passed is the kind of overstatement
+            # this whole design exists to avoid.
+            unanswered = len(self.unknowns)
+            if unanswered:
+                return f"{len(self.passes)} pass, {unanswered} unanswered"
             return f"All {len(self.results)} checks pass"
         if self.outcome is Outcome.WONT_WORK:
             blockers = len(self.failures)

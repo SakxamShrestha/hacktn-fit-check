@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Request received{% endblock %}
+{% block content %}
+<section class="masthead">
+  <h1>Your request has been received</h1>
+  <p class="sub">We will confirm availability with the donor hospitals and come back
+     to you. Nothing is reserved until a donor has said the stock is still there.</p>
+</section>
+
+<section class="plate">
+  <h2 class="panel-head">What you chose</h2>
+  <table class="audit">
+    <thead>
+      <tr><th scope="col">You asked for</th><th scope="col">Unit</th><th scope="col">From</th></tr>
+    </thead>
+    <tbody>
+      {% for pick in chosen %}
+      <tr>
+        <td class="audit-name">{{ pick.line.label }}</td>
+        <td class="audit-detail">{{ pick.offer.device.label }}</td>
+        <td class="audit-value">{{ pick.offer.donor_name }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p class="note">Reference: request {{ request_row.id }}.</p>
+</section>
+{% endblock %}

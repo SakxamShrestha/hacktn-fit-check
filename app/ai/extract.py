@@ -36,6 +36,7 @@ FIELDS = (
     "voltage_max_v",
     "frequencies_hz",
     "power_watts",
+    "needs_three_phase",
     "needs_stable_power",
     "temp_min_c",
     "temp_max_c",

@@ -1,0 +1,19 @@
+{
+  "source": {
+    "note": "Curated clinical equivalences. Each pair is a deliberate editorial claim, not a derived fact.",
+    "direction": "Pairs are one-way. 'from' is what the clinic asked for; 'to' is what may be offered instead when nothing of the asked-for kind passes the screening. The reverse of a pair is only listed when it is separately true, and neither pair below is: a clinic that asked for the mobile or portable device needs the portability and the low power draw, which the fixed installation it would be offered in return does not have.",
+    "review": "Adding a pair here is a clinical claim about what a clinic may treat with. Nothing is added without a named reason."
+  },
+  "pairs": [
+    {
+      "from": "x-ray system",
+      "to": "mobile x-ray unit",
+      "reason": "Does the same clinical job for chest radiography and runs on single-phase supply."
+    },
+    {
+      "from": "ultrasound scanner",
+      "to": "portable ultrasound",
+      "reason": "Same imaging for obstetric and point-of-care use, at lower power and with no fixed installation."
+    }
+  ]
+}

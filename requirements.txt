@@ -9,3 +9,4 @@ oci
 python-dotenv
 pytest
 httpx
+openpyxl

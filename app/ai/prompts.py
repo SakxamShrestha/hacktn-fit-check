@@ -25,6 +25,7 @@ EXTRACTION_SCHEMA = """\
   "voltage_max_v": number|null,
   "frequencies_hz": [integer]|null,
   "power_watts": number|null,
+  "needs_three_phase": boolean|null,
   "needs_stable_power": boolean|null,
   "temp_min_c": number|null,
   "temp_max_c": number|null,
@@ -51,6 +52,9 @@ Notes:
   cartridges, patient circuits, electrodes, filters. Use [] if it uses none.
 - "operating_complexity" is "high" if running or servicing it normally needs
   specialist training.
+- "needs_three_phase" is true when the plate states a three-phase supply,
+  printed as "3~", "3 PH" or "3P+N"; a plate reading "1~" or stating only
+  one voltage is single-phase, so set it false.
 - Set needs_oxygen, needs_distilled_water and needs_compressed_air explicitly
   to true or false whenever the device type makes it clear.
 

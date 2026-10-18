@@ -109,53 +109,38 @@
 
     <div class="plate">
       <h2 class="panel-head">Offer details</h2>
-      <div class="stack">
 
-    </div>
-
-    <div class="row">
-
+      <div class="rowset">
+        <div class="field">
+          <label class="name" for="f-available-until">Available until</label>
+          <input type="text" id="f-available-until" name="available_until" placeholder="2027-03-31">
+          <p class="note">After this date the offer stops being matched.</p>
+        </div>
+        <div class="field">
+          <label class="name" for="f-country">Country</label>
+          <input type="text" id="f-country" name="country" placeholder="United States">
+        </div>
+        <div class="field">
+          <label class="name" for="f-city">City</label>
+          <input type="text" id="f-city" name="city" placeholder="Nashville">
+        </div>
       </div>
 
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label class="name" for="f-available-until">Available until</label>
-        <input type="text" id="f-available-until" name="available_until" placeholder="2027-03-31">
-        <p class="note">After this date the offer stops being matched.</p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label class="name" for="f-country">Country</label>
-        <input type="text" id="f-country" name="country" placeholder="United States">
-      </div>
-      <div class="field">
-        <label class="name" for="f-city">City</label>
-        <input type="text" id="f-city" name="city" placeholder="Nashville">
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label class="name" for="f-donor-name">Your name</label>
-        <input type="text" id="f-donor-name" name="donor_name" placeholder="Baptist Hospital biomedical dept">
-      </div>
-      <div class="field">
-        <label class="name" for="f-donor-email">Email for confirmation</label>
-        <input type="text" id="f-donor-email" name="donor_email" placeholder="biomed@example.org">
-        <p class="note">Used only to ask whether the stock still exists when a match comes up.</p>
+      <div class="rowset">
+        <div class="field">
+          <label class="name" for="f-donor-name">Your name</label>
+          <input type="text" id="f-donor-name" name="donor_name" placeholder="Baptist Hospital biomedical dept">
+        </div>
+        <div class="field">
+          <label class="name" for="f-donor-email">Email for confirmation</label>
+          <input type="text" id="f-donor-email" name="donor_email" placeholder="biomed@example.org">
+          <p class="note">Used only to ask whether the stock still exists when a match comes up.</p>
+        </div>
       </div>
     </div>
 
     <button class="go" type="submit">Read the plate and post it</button>
-      </div>
-    </div>
   </form>
-</section>
 
 <script>
   // The inspector reads the plate without posting the offer, so the donor sees
@@ -216,7 +201,7 @@
 
     button.addEventListener('click', function () {
       var payload = new FormData();
-      ['model_name', 'spec_text', 'nameplate'].forEach(function (field) {
+      ['spec_text', 'nameplate'].forEach(function (field) {
         var input = form.elements[field];
         if (!input) return;
         if (input.type === 'file') {

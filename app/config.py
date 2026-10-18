@@ -28,6 +28,8 @@ class Settings:
     oci_config_path: str
     region: str
     compartment_id: str | None
+    object_storage_namespace: str
+    object_storage_bucket: str
     reasoning_model: str
     vision_model: str
     database_url: str
@@ -55,8 +57,13 @@ def load_settings() -> Settings:
         oci_config_path=os.getenv("OCI_CONFIG_PATH", "~/.oci/config"),
         region=os.getenv("OCI_REGION", "us-chicago-1"),
         compartment_id=os.getenv("OCI_COMPARTMENT_ID", "").strip() or None,
+        object_storage_namespace=os.getenv("OCI_NAMESPACE", "axuai8iwyfwo").strip(),
+        object_storage_bucket=os.getenv("OCI_PHOTO_BUCKET", "fitcheck-device-photos").strip(),
         reasoning_model=os.getenv("REASONING_MODEL", "meta.llama-3.3-70b-instruct"),
-        vision_model=os.getenv("VISION_MODEL", "meta.llama-3.2-90b-vision-instruct"),
+        # meta.llama-3.2-90b-vision-instruct is listed ACTIVE in this tenancy but
+        # returns 404 from on-demand inference, so the nameplate path never
+        # worked. Scout serves on demand and reads images.
+        vision_model=os.getenv("VISION_MODEL", "meta.llama-4-scout-17b-16e-instruct"),
         database_url=_database_url(),
     )
 

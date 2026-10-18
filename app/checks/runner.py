@@ -15,7 +15,7 @@ from app.checks.environment import (
     check_humidity,
     check_temperature,
 )
-from app.checks.power import check_frequency, check_voltage
+from app.checks.power import check_frequency, check_supply_phase, check_voltage
 from app.checks.supply import check_consumables, check_spare_parts, check_support_window
 from app.checks.timing import check_shelf_life
 from app.checks.utilities import check_compressed_air, check_distilled_water, check_oxygen
@@ -36,6 +36,7 @@ RouteCheck = Callable[
 ALL_CHECKS: tuple[Check, ...] = (
     check_frequency,
     check_voltage,
+    check_supply_phase,
     check_temperature,
     check_humidity,
     check_grid_reliability,

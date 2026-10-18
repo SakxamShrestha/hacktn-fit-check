@@ -43,7 +43,7 @@
           {{ c.offer.origin.city }}{% if c.offer.origin.city %}, {% endif %}{{ c.offer.origin.country }}</p>
       </div>
       <div class="candidate-meta">
-        {% if c.distance_km %}<span class="chip">{{ c.distance_km | round | int }} km</span>{% endif %}
+        {% if c.distance_miles is not none %}<span class="chip">{{ c.distance_miles | round | int }} mi</span>{% endif %}
         {% if c.shipment %}<span class="chip">about {{ c.shipment.transit_days }} days to deliver</span>{% endif %}
         <span class="chip">{{ c.offer.quantity_available }} available</span>
         <span class="pill {{ tone[c.verdict.outcome] }}">{{ c.verdict.stamp }}</span>

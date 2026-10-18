@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Upload a list{% endblock %}
+{% block content %}
+<section class="masthead">
+  <h1>What do you need?</h1>
+  <p class="sub">Upload the list you already keep, or just write it out. Either way
+     every item is screened against your facility before you are shown anything.</p>
+</section>
+
+<form method="post" action="/request/upload" enctype="multipart/form-data" class="form">
+  <div class="plate">
+    <h2 class="panel-head">Receiving facility</h2>
+    <div class="field">
+      <label class="name" for="f-facility-slug">Facility</label>
+      <select id="f-facility-slug" name="facility_slug">
+        {% for f in facilities %}
+        <option value="{{ f.slug }}">{{ f.name }} &mdash; {{ f.country }}</option>
+        {% endfor %}
+      </select>
+      <p class="note">Its grid, climate and utilities are what every item is checked against.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="plate">
+      <h2 class="panel-head">Upload a list</h2>
+      <label class="nameplate scan">
+        <span class="scan-reticle" aria-hidden="true"></span>
+        <span class="scan-head">Spreadsheet or CSV</span>
+        <span class="scan-sub">A column of equipment names, and a quantity column if
+          you keep one. Headings like <em>device</em>, <em>item</em> or
+          <em>quantity</em> are picked up automatically.</span>
+        <span class="scan-act">Choose a file</span>
+        <input type="file" name="list_file" accept=".csv,.xlsx">
+        <span class="scan-file" data-scan-name>No file chosen</span>
+      </label>
+    </div>
+
+    <div class="plate">
+      <h2 class="panel-head">Or write it out</h2>
+      <div class="field">
+        <label class="name" for="f-wanted-text">What you need</label>
+        <textarea id="f-wanted-text" name="wanted_text" rows="8"
+                  placeholder="2 ultrasound scanners&#10;an x-ray machine&#10;3 patient monitors"></textarea>
+        <p class="note">Plain sentences are fine. Names and counts are read out of
+           them; nothing about suitability is decided here.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="go" type="submit">Screen this list</button>
+</form>
+
+<script>
+  document.querySelectorAll('.scan input[type="file"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+      var out = input.closest('.scan').querySelector('[data-scan-name]');
+      if (out) out.textContent = input.files.length ? input.files[0].name : 'No file chosen';
+    });
+  });
+</script>
+{% endblock %}

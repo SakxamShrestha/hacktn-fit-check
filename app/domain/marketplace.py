@@ -77,6 +77,7 @@ class Offer:
     quantity_reserved: int = 0
     quantity_shipped: int = 0
     available_until: date | None = None
+    photo_key: str = ""
     status: OfferStatus = OfferStatus.OPEN
     id: int | None = None
     created_at: datetime | None = None

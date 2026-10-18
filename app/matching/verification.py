@@ -31,7 +31,7 @@ LEGAL_TRANSITIONS: Mapping[MatchState, frozenset[MatchState]] = MappingProxyType
 )
 
 
-class InvalidTransition(Exception):
+class InvalidTransition(ValueError):
     """Raised when a match is asked to make a move the spec does not allow."""
 
     def __init__(self, current: MatchState, target: MatchState) -> None:

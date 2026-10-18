@@ -87,6 +87,76 @@ DEMO_OFFERS = (
     ),
 )
 
+# Imaging for the demo. The two X-ray units are the substitution case: a
+# stationary system needs three-phase supply that none of the seeded clinics
+# have, so it is blocked everywhere and the mobile unit is what can actually go.
+IMAGING_OFFERS = (
+    Offer(
+        donor_name="Vanderbilt Radiology surplus",
+        donor_email="radiology@example.org",
+        device_type="x-ray system",
+        origin=GeoPoint(country="United States", city="Nashville", latitude=36.1627, longitude=-86.7816),
+        quantity_offered=1,
+        device=_device(
+            manufacturer="Siemens", model="Multix Fusion", year_of_manufacture=2018,
+            voltage_min_v=380, voltage_max_v=480, frequencies_hz=[50, 60],
+            power_watts=32000, needs_three_phase=True,
+            temp_min_c=10.0, temp_max_c=35.0, humidity_max_pct=75.0,
+            needs_oxygen=False, needs_compressed_air=False, needs_distilled_water=False,
+            consumables=["detector calibration kit"],
+            manual_languages=["English", "German"], operating_complexity="high",
+        ),
+    ),
+    Offer(
+        donor_name="Vanderbilt Radiology surplus",
+        donor_email="radiology@example.org",
+        device_type="mobile x-ray unit",
+        origin=GeoPoint(country="United States", city="Nashville", latitude=36.1627, longitude=-86.7816),
+        quantity_offered=2,
+        device=_device(
+            manufacturer="GE Healthcare", model="AMX 240", year_of_manufacture=2020,
+            voltage_min_v=100, voltage_max_v=240, frequencies_hz=[50, 60],
+            power_watts=2000, needs_three_phase=False,
+            temp_min_c=10.0, temp_max_c=40.0, humidity_max_pct=80.0,
+            needs_oxygen=False, needs_compressed_air=False, needs_distilled_water=False,
+            consumables=["detector plates"],
+            manual_languages=["English", "French"], operating_complexity="high",
+        ),
+    ),
+    Offer(
+        donor_name="Memphis Imaging Partners",
+        donor_email="imaging@example.org",
+        device_type="ultrasound scanner",
+        origin=GeoPoint(country="United States", city="Memphis", latitude=35.1495, longitude=-90.0490),
+        quantity_offered=1,
+        device=_device(
+            manufacturer="Philips", model="Affiniti 50", year_of_manufacture=2019,
+            voltage_min_v=100, voltage_max_v=240, frequencies_hz=[50, 60],
+            power_watts=500, needs_three_phase=False,
+            temp_min_c=10.0, temp_max_c=35.0, humidity_max_pct=80.0,
+            needs_oxygen=False, needs_compressed_air=False, needs_distilled_water=False,
+            consumables=["ultrasound gel", "probe covers"],
+            manual_languages=["English"], operating_complexity="high",
+        ),
+    ),
+    Offer(
+        donor_name="Nairobi Equipment Trust",
+        donor_email="trust@example.org",
+        device_type="portable ultrasound",
+        origin=GeoPoint(country="Kenya", city="Nairobi", latitude=-1.2921, longitude=36.8219),
+        quantity_offered=3,
+        device=_device(
+            manufacturer="Butterfly Network", model="iQ+", year_of_manufacture=2022,
+            voltage_min_v=100, voltage_max_v=240, frequencies_hz=[50, 60],
+            power_watts=15, needs_three_phase=False,
+            temp_min_c=0.0, temp_max_c=40.0, humidity_max_pct=90.0,
+            needs_oxygen=False, needs_compressed_air=False, needs_distilled_water=False,
+            consumables=["ultrasound gel"],
+            manual_languages=["English", "French", "Swahili"], operating_complexity="low",
+        ),
+    ),
+)
+
 # Support equipment. Without these in the inventory a requirement stays advice.
 SUPPORT_OFFERS = (
     Offer(
@@ -126,7 +196,7 @@ def main() -> None:
     print(f"facilities: {len(FACILITIES)}")
 
     expires = date.today() + timedelta(days=OFFER_WINDOW_DAYS)
-    for offer in DEMO_OFFERS + SUPPORT_OFFERS:
+    for offer in DEMO_OFFERS + IMAGING_OFFERS + SUPPORT_OFFERS:
         offer_id = repo.save_offer(
             Offer(**{**offer.__dict__, "available_until": expires})
             if offer.available_until is None else offer

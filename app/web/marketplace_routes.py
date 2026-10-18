@@ -7,7 +7,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, Request, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from app.ai.categorise import categorise_support
@@ -26,12 +26,17 @@ from app.domain.marketplace import (
     RequestLine,
 )
 from app.domain.provenance import Provenance, fact
+from app.domain.result import Outcome
 from app.matching.bundle import build_bundle
+from app.intake.freetext import parse_list
+from app.intake.tables import IntakeError, parse_table
 from app.matching.coverage import LineCoverage
 from app.matching.pipeline import propose_match, rank_candidates
+from app.matching.substitutes import find_substitutes
 from app.matching.verification import confirm, request_confirmation, withdraw
 from app.reference.country_power import country_centroid, lookup
 from app.reference.facility_registry import corroborates, find_candidates
+from app.storage.photos import fetch_photo, store_photo
 from app.web import forms
 from app.web.forms import FormError
 from app.web.presenters import rule_count, TONE_BY_OUTCOME, TONE_BY_STATUS
@@ -83,7 +88,6 @@ def offer_form(request: Request) -> HTMLResponse:
 @router.post("/offer", response_class=HTMLResponse)
 async def offer_submit(
     request: Request,
-    model_name: str = Form(default=""),
     spec_text: str = Form(default=""),
     device_type: str = Form(default=""),
     quantity: str = Form(default="1"),
@@ -96,10 +100,15 @@ async def offer_submit(
     nameplate: UploadFile | None = File(default=None),
 ) -> HTMLResponse:
     try:
-        typed = "\n".join(p for p in (model_name.strip(), spec_text.strip()) if p)
+        typed = spec_text.strip()
         image_data_url = ""
+        photo_key = ""
         if nameplate is not None and nameplate.filename:
-            image_data_url = image_to_data_url(await nameplate.read(), nameplate.content_type or "")
+            raw = await nameplate.read()
+            content_type = nameplate.content_type or ""
+            image_data_url = image_to_data_url(raw, content_type)
+            # Storage is best effort. A donation is never lost to a dead bucket.
+            photo_key = store_photo(raw, content_type) or ""
         if not typed and not image_data_url:
             raise FormError("Give a model name, paste spec text, or add a nameplate photo.")
 
@@ -111,10 +120,11 @@ async def offer_submit(
                 extract_device(typed_text=typed, image_data_url=image_data_url), dated
             ),
             device_type=forms.text(device_type, "Kind of device", required=True, limit=120),
-            support_kind=_support_kind(device_type, model_name),
+            support_kind=_support_kind(device_type, typed),
             origin=_point(forms.text(country, "Country", required=True), city),
             quantity_offered=forms.whole_number(quantity, "How many", default=1, minimum=1),
             available_until=forms.iso_date(available_until, "Available until"),
+            photo_key=photo_key,
         )
         offer_id = repo.save_offer(offer)
     except (FormError, ValueError, GenAiError, RepositoryError) as exc:
@@ -167,6 +177,7 @@ async def facility_submit(request: Request) -> HTMLResponse:
             outages_per_week=forms.whole_number(str(form.get("outages_per_week", "")), "Outages"),
             has_voltage_stabilizer=forms.flag(form.get("has_voltage_stabilizer")),
             has_generator=forms.flag(form.get("has_generator")),
+            has_three_phase_power=forms.flag(form.get("has_three_phase_power")),
             has_oxygen_supply=forms.flag(form.get("has_oxygen_supply")),
             has_distilled_water=forms.flag(form.get("has_distilled_water")),
             has_compressed_air=forms.flag(form.get("has_compressed_air")),
@@ -224,6 +235,48 @@ async def request_submit(request: Request) -> HTMLResponse:
     return RedirectResponse(url=f"/request/{request_id}/matches", status_code=303)
 
 
+@router.get("/request/upload", response_class=HTMLResponse)
+def request_upload_form(request: Request) -> HTMLResponse:
+    """Arrive with a spreadsheet or a sentence instead of typing a form."""
+    return TEMPLATES.TemplateResponse(
+        request=request, name="request_upload.html",
+        context={"facilities": repo.list_facilities()},
+    )
+
+
+@router.post("/request/upload", response_class=HTMLResponse)
+async def request_upload_submit(request: Request) -> HTMLResponse:
+    """Turn an uploaded table or a typed list into one request.
+
+    Both routes end at repo.save_request, so however a clinic arrives there is
+    still exactly one way a request is stored.
+    """
+    form = await request.form()
+    facility_slug = str(form.get("facility_slug") or "").strip()
+    typed = str(form.get("wanted_text") or "").strip()
+    upload = form.get("list_file")
+
+    try:
+        if not facility_slug:
+            raise FormError("Choose which facility this request is for.")
+
+        lines: tuple = ()
+        if upload is not None and getattr(upload, "filename", ""):
+            lines = parse_table(await upload.read(), upload.filename)
+        elif typed:
+            lines = parse_list(typed, vocabulary=repo.known_device_types())
+        else:
+            raise FormError("Upload a list, or type what you need.")
+
+        request_id = repo.save_request(
+            DonationRequest(facility_slug=facility_slug, lines=lines, note=typed[:600])
+        )
+    except (FormError, IntakeError, ValueError, RepositoryError) as exc:
+        return _error(request, str(exc), back="/request/upload")
+
+    return RedirectResponse(url=f"/request/{request_id}/select", status_code=303)
+
+
 @router.get("/request/{request_id}/matches", response_class=HTMLResponse)
 def matches(request: Request, request_id: int) -> HTMLResponse:
     row = repo.load_request(request_id)
@@ -251,6 +304,73 @@ def matches(request: Request, request_id: int) -> HTMLResponse:
             "coverages": coverages, "bundles": bundles,
             "symbol": TONE_BY_STATUS, "tone": TONE_BY_OUTCOME,
         },
+    )
+
+
+@router.get("/request/{request_id}/select", response_class=HTMLResponse)
+def request_select(request: Request, request_id: int) -> HTMLResponse:
+    """Choose a unit per line, from a list the screening has already filtered.
+
+    Blocked offers are carried through rather than dropped. A clinic that sees
+    a shorter list with no explanation learns nothing; one that sees the unit
+    greyed out with the check that stopped it learns what to fix.
+    """
+    row = repo.load_request(request_id)
+    if row is None:
+        return _error(request, f"No request with id {request_id}.")
+    facility = repo.load_facility(row.facility_slug)
+    if facility is None:
+        return _error(request, f"No facility profile for {row.facility_slug}.")
+
+    groups = []
+    for line in row.lines:
+        offers = repo.open_offers_for_type(line.device_type)
+        ranked = rank_candidates(facility, offers)
+        blocked = _blocked_for(facility, offers)
+        groups.append({
+            "coverage": LineCoverage(line=line, candidates=ranked, screened=len(offers)),
+            "blocked": blocked,
+            "substitutes": (
+                find_substitutes(line.device_type, facility, repo.open_offers_for_type)
+                if not ranked else ()
+            ),
+        })
+
+    return TEMPLATES.TemplateResponse(
+        request=request, name="request_select.html",
+        context={
+            "request_row": row, "facility": facility, "groups": groups,
+            "tone": TONE_BY_OUTCOME,
+        },
+    )
+
+
+@router.post("/request/{request_id}/select", response_class=HTMLResponse)
+async def request_select_submit(request: Request, request_id: int) -> HTMLResponse:
+    """Record what the clinic chose and tell them what happens next."""
+    row = repo.load_request(request_id)
+    if row is None:
+        return _error(request, f"No request with id {request_id}.")
+
+    form = await request.form()
+    chosen = []
+    for line in row.lines:
+        raw = str(form.get(f"choice_{line.device_type}") or "").strip()
+        if not raw.isdigit():
+            continue
+        offer = repo.load_offer(int(raw))
+        if offer is not None:
+            chosen.append({"line": line, "offer": offer})
+
+    if not chosen:
+        return _error(
+            request, "Choose at least one unit before sending the request.",
+            back=f"/request/{request_id}/select",
+        )
+
+    return TEMPLATES.TemplateResponse(
+        request=request, name="order_received.html",
+        context={"request_row": row, "chosen": chosen},
     )
 
 
@@ -338,6 +458,47 @@ def confirm_submit(request: Request, token: str, answer: str = Form(...)) -> HTM
     return RedirectResponse(url=f"/confirm/{token}", status_code=303)
 
 
+# ---- device photographs --------------------------------------------------
+
+# Shown when an offer has no photograph, or the store cannot be reached. A
+# drawn placeholder rather than a broken image, so a row never collapses.
+PLACEHOLDER_SVG = (
+    b'<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" '
+    b'viewBox="0 0 160 120" role="img" aria-label="No photograph">'
+    b'<rect width="160" height="120" fill="#19202C"/>'
+    b'<rect x="40" y="36" width="80" height="52" rx="4" fill="none" '
+    b'stroke="#39455C" stroke-width="2"/>'
+    b'<circle cx="80" cy="62" r="13" fill="none" stroke="#39455C" stroke-width="2"/>'
+    b'<text x="80" y="106" text-anchor="middle" font-family="monospace" '
+    b'font-size="10" fill="#6B7A94">no photo</text></svg>'
+)
+PLACEHOLDER_TYPE = "image/svg+xml"
+PHOTO_CACHE_SECONDS = 3600
+
+
+@router.get("/photo/{offer_id}")
+def device_photo(offer_id: int) -> Response:
+    """Stream a donor's photograph back through the app.
+
+    The bucket stays private: nothing here hands out a public or
+    pre-authenticated URL, so there is no link to expire and no object a
+    stranger can enumerate. A missing key or an unreachable store returns the
+    placeholder rather than an error, because a photograph is never the reason
+    a clinic cannot see an offer.
+    """
+    offer = repo.load_offer(offer_id)
+    found = fetch_photo(offer.photo_key) if offer and offer.photo_key else None
+    if found is None:
+        return Response(content=PLACEHOLDER_SVG, media_type=PLACEHOLDER_TYPE)
+
+    raw, content_type = found
+    return Response(
+        content=raw,
+        media_type=content_type,
+        headers={"Cache-Control": f"private, max-age={PHOTO_CACHE_SECONDS}"},
+    )
+
+
 # ---- live extraction ----------------------------------------------------
 
 # The five readings a rating plate carries, in the order it prints them.
@@ -405,9 +566,7 @@ async def offer_extract(request: Request) -> JSONResponse:
     facts rather than a service that did not answer.
     """
     form = await request.form()
-    typed = str(form.get("spec_text") or "").strip()
-    model_name = str(form.get("model_name") or "").strip()
-    combined = "\n".join(p for p in (model_name, typed) if p)
+    combined = str(form.get("spec_text") or "").strip()
 
     image_data_url = ""
     upload = form.get("nameplate")
@@ -510,6 +669,29 @@ def _point(country: str, city: str) -> GeoPoint:
     latitude, longitude = (country_centroid(country) or (None, None))
     return GeoPoint(country=country, city=(city or "").strip(),
                     latitude=latitude, longitude=longitude)
+
+
+def _blocked_for(facility: FacilityProfile, offers: list) -> list[dict]:
+    """Offers the checks rejected, each with the first reason they were rejected.
+
+    rank_candidates drops these on purpose, so they are re-screened here rather
+    than changing what ranking means.
+    """
+    from app.checks.runner import check_fit
+    from app.domain.device import SupplyIntel
+
+    rejected = []
+    for offer in offers:
+        verdict = check_fit(offer.device, facility, SupplyIntel(country=facility.country))
+        if verdict.outcome is not Outcome.WONT_WORK:
+            continue
+        reason = next((r for r in verdict.results if r.blocking), None)
+        rejected.append({
+            "offer": offer,
+            "label": reason.label if reason else "Screening",
+            "detail": reason.detail if reason else "",
+        })
+    return rejected
 
 
 def _lines_from(types: list[str], quantities: list[str]) -> tuple[RequestLine, ...]:

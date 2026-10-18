@@ -245,6 +245,7 @@ def _offer_values(offer: Offer) -> dict[str, Any]:
         "quantity_reserved": offer.quantity_reserved,
         "quantity_shipped": offer.quantity_shipped,
         "available_until": offer.available_until,
+        "photo_key": offer.photo_key,
         "status": offer.status.value,
     }
 
@@ -266,6 +267,7 @@ def _offer_from_row(row: Any) -> Offer:
         quantity_reserved=row["quantity_reserved"],
         quantity_shipped=row["quantity_shipped"],
         available_until=row["available_until"],
+        photo_key=row["photo_key"] or "",
         status=OfferStatus(row["status"]),
         id=row["id"],
         created_at=row["created_at"],
@@ -292,6 +294,26 @@ def update_offer(offer: Offer) -> None:
         raise RepositoryError("Cannot update an offer that was never saved.")
     statement = update(offers).where(offers.c.id == offer.id).values(**_offer_values(offer))
     _write(statement, "Could not update the offer")
+
+
+def known_device_types() -> list[str]:
+    """Every device type currently on an open offer, plus the substitute terms.
+
+    Fed to the free-text intake as a controlled vocabulary, so a clinic writing
+    "x-ray machine" produces a line that actually matches stock rather than a
+    dead one.
+    """
+    rows = _all_rows(
+        select(offers.c.device_type)
+        .where(offers.c.status == OfferStatus.OPEN.value)
+        .distinct(),
+        "Could not list the stocked device types",
+    )
+    found = {str(row["device_type"]).strip() for row in rows if row["device_type"]}
+
+    from app.matching.substitutes import known_terms
+
+    return sorted(found | set(known_terms()))
 
 
 def open_offers_for_type(device_type: str, today: date | None = None) -> list[Offer]:

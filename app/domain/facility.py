@@ -27,6 +27,7 @@ class FacilityProfile:
     outages_per_week: int = 0
     has_voltage_stabilizer: bool = False
     has_generator: bool = False
+    has_three_phase_power: bool = False
 
     has_oxygen_supply: bool = False
     has_distilled_water: bool = False
