@@ -644,11 +644,14 @@ button.go-quiet:hover { border-color: var(--block); color: var(--block); }
 
 /* ---- split workspace -------------------------------------------------- */
 
+/* A panel heading is a heading, not a label. It was set in small muted mono,
+   which read as a caption and left each panel looking untitled. */
 .panel-head {
-  font: 600 12px/1.6 var(--mono);
-  color: var(--etch);
-  margin: 0 0 var(--s3);
-  padding-bottom: var(--s2);
+  font: 700 20px/1.25 var(--display);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 var(--s4);
+  padding-bottom: var(--s3);
   border-bottom: 1px solid var(--rule);
 }
 .workbench .nameplate { margin-bottom: var(--s4); }
